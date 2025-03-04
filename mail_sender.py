@@ -8,11 +8,16 @@ from email.message import EmailMessage
 
 # env variable
 env = environ.Env()
-environ.Env.read_env(env_file='/.env')
+
+# script_path
+env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+
+env.read_env(env_file=env_path)
+
 
 def send_alert_mails(df):
     html_rows = ""
-    num_of_html_rows = {0:len(df.itertuples())/3}.get(df.itertuples()%3,round(df.itertuples())/3)
+    num_of_html_rows = {0:len(df)/3}.get(len(df)%3,round(len(df)/3))
     for i in range(num_of_html_rows):
         row1, row2, row3 = df.iloc[1+3*i].to_dict(), df.iloc[2+3*i].to_dict(), df.iloc[3+3*i].to_dict()
         html_rows += f"""
@@ -55,10 +60,25 @@ def send_alert_mails(df):
             </div>
         </div>"""
 
-    with open("template.html", 'r') as file:
-        html_content = file.read()
 
-    html_content.replace("{{ datas }}", html_rows)
+    template_html = f"""
+        <!DOCTYPE html>
+        <html lang='en'>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+            <title>Document</title>
+        </head>
+        <body>
+            <div class="container">
+                <h1 class="text-center text-primary">Vos cours en promotion</h1>
+                { html_rows }
+            </div>
+        </body>
+        </html>
+        """
 
     # Création du message
     message = MIMEMultipart("alternative")
@@ -67,7 +87,7 @@ def send_alert_mails(df):
     message["To"] = "kateyveschadrac@gmail.com"
 
     # Ajout du contenu HTML
-    html_part = MIMEText(html_content, "html")
+    html_part = MIMEText(template_html, "html")
     message.attach(html_part)
 
     # Envoi de l'email
