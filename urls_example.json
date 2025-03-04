@@ -1,0 +1,47 @@
+{
+    "django":[
+                "https://www.udemy.com/course/django-channels-create-your-own-web-chat-application",
+                "https://www.udemy.com/course/react-django-full-stack-advance",
+                "https://www.udemy.com/course/django-react-build-a-location-based-real-estate-website",
+                "https://www.udemy.com/course/developper-une-application-e-commerce-complete-avec-django",
+                "https://www.udemy.com/course/django-pro-de-novice-a-expert-en-developpement-web-python",
+                "https://www.udemy.com/course/python-django-real-world-project-multi-vendor-restaurant",
+                "https://www.udemy.com/course/maitriser-les-paiements-en-ligne-avec-stripe-et-django",
+                "https://www.udemy.com/course/python-django-payment-integration-paypal-stripe-2022",
+                "https://www.udemy.com/course/full-stack-react-django-drf-channels-project-djchat"
+                ],
+    "git-github":[
+                "https://www.udemy.com/course/formation-git-github",
+                "https://www.udemy.com/course/git-github-la-formation-ultime"
+                ],
+    "openai":[
+            "https://www.udemy.com/course/the-complete-chatbot-bootcamp",
+            "https://www.udemy.com/course/chatgpt-with-react-and-openai-api-2023-build-your-own-app",
+            "https://www.udemy.com/course/openai-learnit",
+            "https://www.udemy.com/course/openai-mastery-prompt-engineering-chatgpt-dall-e-api-etc",
+            "https://www.udemy.com/course/chatgpt-bard-bing-complete-guide-to-chatgpt-openai-apis",
+            "https://www.udemy.com/course/openai-python-api-bootcamp-learn-to-use-ai-gpt3-and-more",
+            "https://www.udemy.com/course/chatgpt-dall-e-openai-api-step-by-step-masterclass",
+            "https://www.udemy.com/course/complete-openai-api-course-connect-to-chatgpt-api-more"
+            ],
+    "mongodb":[
+            "https://www.udemy.com/course/mongodb-pour-les-grands-debutants-2022",
+            "https://www.udemy.com/course/mongodb-devenir-expert-du-nosql"
+    ],
+    "sql":[
+            "https://www.udemy.com/course/devenir-un-expert-du-sql-le-cours-complet"
+        ],
+    "python x mt5":[
+            "https://www.udemy.com/course/trading-automatise-avec-metatrader-5-et-python-tutoriel",
+            "https://www.udemy.com/course/trading-algorithmique-pour-debutant-de-zero-a-heros"
+                    ],
+    "data science":[
+                    "https://www.udemy.com/course/big-data-with-scalasparkpyspark-and-aws-a-z-50-hours"
+                    ],
+    "mql5":[
+        "https://www.udemy.com/course/mql5-creez-vos-propres-robots-indicateurs-metatrader-5",
+        "https://www.udemy.com/course/algorithmic-trading-robot-mql5",
+        "https://www.udemy.com/course/mql5-advanced-creating-algorithmic-trading-robots-with-mql5",
+        "https://www.udemy.com/course/mql5-projects-code-a-support-resistance-breakout-strategy"
+        ]
+}
