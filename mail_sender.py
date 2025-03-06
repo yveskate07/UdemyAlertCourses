@@ -11,74 +11,105 @@ env = environ.Env()
 
 # script_path
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs','logs.log')
+
 
 env.read_env(env_file=env_path)
 
 
-def send_alert_mails(df):
-    html_rows = ""
-    num_of_html_rows = {0:len(df)/3}.get(len(df)%3,round(len(df)/3))
-    for i in range(num_of_html_rows):
-        row1, row2, row3 = df.iloc[1+3*i].to_dict(), df.iloc[2+3*i].to_dict(), df.iloc[3+3*i].to_dict()
-        html_rows += f"""
-        <div class='row justify-content-center'>
-            <div class='col-md-4 col-sm-4 p-2' style="max-width: 28%;">
-                <a href='{row1['Course url']}'>
-                    <div style="height: 65%;">
-                        <img style="width: 100%;" src='{row1['Image']}' alt="Vignette du cours">
-                    </div>
-                    <div style="height: 35%;">
-                        <h1 >'{row1['Name']}'</h1>
-                        <h3 class="pb-5">'{row1['Description']}'</h3>
-                        <h4 class="badge bg-warning float-start">'{row1['Price']}'</h4>
-                    </div>
-                </a>
-            </div>
-            <div class='col-md-4 col-sm-4 p-2' style="max-width: 28%;">
-                <a href='{row2['Course url']}'>
-                    <div style="height: 65%;">
-                        <img style="width: 100%;" src='{row2['Image']}' alt="Vignette du cours">
-                    </div>
-                    <div style="height: 35%;">
-                        <h1 >'{row2['Name']}'</h1>
-                        <h3 class="pb-5">'{row2['Description']}'</h3>
-                        <h4 class="badge bg-warning float-start">'{row2['Price']}'</h4>
-                    </div>
-                </a>
-            </div>
-            <div class='col-md-4 col-sm-4 p-2' style="max-width: 28%;">
-                <a href='{row3['Course url']}'>
-                    <div style="height: 65%;">
-                        <img style="width: 100%;" src='{row3['Image']}' alt="Vignette du cours">
-                    </div>
-                    <div style="height: 35%;">
-                        <h1 >'{row3['Name']}'</h1>
-                        <h3 class="pb-5">'{row3['Description']}'</h3>
-                        <h4 class="badge bg-warning float-start">'{row3['Price']}'</h4>
-                    </div>
-                </a>
-            </div>
-        </div>"""
+def clear_log_file():
+    """Efface le contenu du fichier .log"""
+    with open(log_path, 'w') as file:
+        pass  # Ouvre le fichier en mode écriture et le vide
 
 
-    template_html = f"""
-        <!DOCTYPE html>
-        <html lang='en'>
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css' rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-            <title>Document</title>
-        </head>
-        <body>
-            <div class="container">
-                <h1 class="text-center text-primary">Vos cours en promotion</h1>
-                { html_rows }
-            </div>
-        </body>
-        </html>
+def read_log_file():
+    """Retourne le contenu du fichier .log"""
+    try:
+        with open(log_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        return "Fichier introuvable."
+    except Exception as e:
+        return f"Erreur : {e}"
+
+def update_env_variable(key, new_value):
+
+    with open(env_path, "r") as file:
+        lines = file.readlines()
+
+    # Vérifier si la clé existe et la mettre à jour
+    updated = False
+    with open(env_path, "w") as file:
+        for line in lines:
+            if line.startswith(f"{key}="):
+                file.write(f"{key}={new_value}\n")
+                updated = True
+            else:
+                file.write(line)
+
+        # Si la clé n'existe pas, on l'ajoute
+        if not updated:
+            file.write(f"{key}={new_value}\n")
+
+
+def generate_html_table(df):
+    """
+    Génère une table HTML à partir d'un DataFrame avec les colonnes 'course_name' et 'price'.
+    Ajoute une colonne supplémentaire "Voir" avec un lien fictif.
+
+    :param df: DataFrame contenant les colonnes 'course_name' et 'price'
+    :return: Code HTML de la table
+    """
+    table_html = """
+    <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
+        <thead>
+            <tr>
+                <th style='text-align: center;'>Cours</th>
+                <th style='text-align: center;'>Description</th>
+                <th style='text-align: center;'>Prix</th>
+                <th style='text-align: center;'>Voir</th>
+            </tr>
+        </thead>
+        <tbody>
+    """
+
+    for _, row in df.iterrows():
+        course_name = row['Name']
+        price = row['Price']
+        link = row["Course url"]
+        image_url = row["Image"]
+
+        table_html += f"""
+            <tr>
+                <td>
+                    <div style='display: flex; align-items: center;'>
+                        <img src='{image_url}' alt='Image de {course_name}' style='width:50px; height:50px; margin-right: 10px;'>
+                        <p style='margin: 0;'>{course_name}</p>
+                    </div>
+                </td>
+                <td>{row['Description']}</td>
+                <td style='text-align: center;'>{price}</td>
+                <td style='text-align: center;'><a href="{link}">Voir</a></td>
+            </tr>
         """
+
+    table_html += """
+        </tbody>
+    </table>
+    """
+
+    return table_html
+
+
+def send_alert_mails(df):
+
+    print(f"Le mail a deja ete envoyé ? {env.bool("MAIL_SENT")==True}")
+
+    if env.bool("MAIL_SENT"):
+        return
+
+    template_html = generate_html_table(df)
 
     # Création du message
     message = MIMEMultipart("alternative")
@@ -96,9 +127,10 @@ def send_alert_mails(df):
         server.login(env("SENDER"), env("PASSWORD"))
         server.sendmail(env("SENDER"), "kateyveschadrac@gmail.com", message.as_string())
         log_writer("✅ Email d'alerte envoyé avec succès !")
+        update_env_variable('MAIL_SENT', 'True')
 
 
-def send_log_mails(FICHIER_LOG = "logs\\logs.log"):
+def send_log_mails():
     # Configuration
     EMAIL_ADDRESS = env("SENDER")  # Remplacez par votre email
     EMAIL_PASSWORD = env("PASSWORD")  # Remplacez par votre mot de passe (ou App Password)
@@ -113,11 +145,11 @@ def send_log_mails(FICHIER_LOG = "logs\\logs.log"):
     msg.set_content("Bonjour,\n\nVeuillez trouver ci-joint le fichier de logs.\n\nCordialement.")
 
     # Ajout du fichier en pièce jointe
-    if os.path.exists(FICHIER_LOG):
-        with open(FICHIER_LOG, "rb") as file:
-            msg.add_attachment(file.read(), maintype="application", subtype="octet-stream", filename=FICHIER_LOG)
+    if os.path.exists(log_path):
+        with open(log_path, "rb") as file:
+            msg.add_attachment(file.read(), maintype="application", subtype="octet-stream", filename=log_path)
     else:
-        return log_writer(f"⚠️ Fichier '{FICHIER_LOG}' non trouvé. Aucune pièce jointe envoyée.", 'error')
+        return log_writer(f"⚠️ Fichier '{log_path}' non trouvé. Aucune pièce jointe envoyée.", 'error')
 
     # Envoi du mail via SMTP
     try:
@@ -126,6 +158,6 @@ def send_log_mails(FICHIER_LOG = "logs\\logs.log"):
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.send_message(msg)
             log_writer("✅ Email de logs envoyé avec succès !")
-            os.remove(FICHIER_LOG)
+            clear_log_file()
     except Exception as e:
         log_writer(f"❌ Erreur lors de l'envoi de l'email : {e}", 'error')
