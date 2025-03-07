@@ -8,7 +8,7 @@
 ### 4 - your email, so you can receive alerts.
 
 ## II - How it works ?
-### We supposed that you have python version >= 3.10, if you're on a Linux or MacOs system, you just have to run the script.sh file. If not, then consider installing Git Bash and execute the script.sh
+
 ### When the program starts, it starts scrapping informations on every courses in urls.json. Especially the program is searching for the name, description, price, currency of the price, the image link and the course link. 
 ### Then all these datas are stored in a csv file at csv/courses_tracked_prices.csv.
 ### We filter all the courses which are discounted and we send an alert email to your email.
