@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG,
                     filemode="a",
                     format='%(asctime)s - %(levelname)s - %(message)s') # configuring the level of the logs to be displayed
 
-def log_writer(msg, level='info'):
+def log_writer(msg, level='info'): # writing logs with msg depending on the level
     if level == "debug":
         logging.debug(msg)
 

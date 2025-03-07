@@ -11,18 +11,20 @@ env = environ.Env()
 
 # script_path
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
+# log_path
 log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs','logs.log')
 
-
+# retrieving env variables
 env.read_env(env_file=env_path)
 
 
+# function to clear all logs messages
 def clear_log_file():
     """Efface le contenu du fichier .log"""
     with open(log_path, 'w') as file:
         pass  # Ouvre le fichier en mode écriture et le vide
 
-
+# function to retrieve all logs messages
 def read_log_file():
     """Retourne le contenu du fichier .log"""
     try:
@@ -33,6 +35,7 @@ def read_log_file():
     except Exception as e:
         return f"Erreur : {e}"
 
+# function to update an env variable
 def update_env_variable(key, new_value):
 
     with open(env_path, "r") as file:
@@ -53,14 +56,9 @@ def update_env_variable(key, new_value):
             file.write(f"{key}={new_value}\n")
 
 
+# function to generate a html table code out of a dataframe given
 def generate_html_table(df):
-    """
-    Génère une table HTML à partir d'un DataFrame avec les colonnes 'course_name' et 'price'.
-    Ajoute une colonne supplémentaire "Voir" avec un lien fictif.
 
-    :param df: DataFrame contenant les colonnes 'course_name' et 'price'
-    :return: Code HTML de la table
-    """
     table_html = """
     <table border="1" style="border-collapse: collapse; width: 100%; text-align: left;">
         <thead>
@@ -102,9 +100,8 @@ def generate_html_table(df):
     return table_html
 
 
-def send_alert_mails(df):
-
-    print(f"Le mail a deja ete envoyé ? {env.bool("MAIL_SENT")==True}")
+# function to send alert mail containing all course informations i'm interested with
+def send_alert_mails(df, receiver="kateyveschadrac@gmail.com"): # you can change receiver if needed
 
     if env.bool("MAIL_SENT"):
         return
@@ -115,7 +112,7 @@ def send_alert_mails(df):
     message = MIMEMultipart("alternative")
     message["Subject"] = "You got some discounts on your wishlist"
     message["From"] = env("SENDER")
-    message["To"] = "kateyveschadrac@gmail.com"
+    message["To"] = receiver
 
     # Ajout du contenu HTML
     html_part = MIMEText(template_html, "html")
@@ -125,11 +122,12 @@ def send_alert_mails(df):
     with smtplib.SMTP(env("SMTP_SERVER"), env("SMTP_PORT")) as server:
         server.starttls()  # Chiffrement TLS
         server.login(env("SENDER"), env("PASSWORD"))
-        server.sendmail(env("SENDER"), "kateyveschadrac@gmail.com", message.as_string())
+        server.sendmail(env("SENDER"), receiver, message.as_string())
         log_writer("✅ Email d'alerte envoyé avec succès !")
         update_env_variable('MAIL_SENT', 'True')
 
 
+# function to send mails containing log file if there are some log files
 def send_log_mails():
     # Configuration
     EMAIL_ADDRESS = env("SENDER")  # Remplacez par votre email

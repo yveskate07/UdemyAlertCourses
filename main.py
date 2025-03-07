@@ -1,16 +1,16 @@
 import json
 import os
 import time
-import traceback
-
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup as bs
 from logs_writer import log_writer
 from mail_sender import send_alert_mails, send_log_mails, update_env_variable, read_log_file
 
+# subject I'm interested with
 subject_of_interest = "django"
 
+# function for retrieving urls from urls.json
 def get_urls(filepath):
     # Test the filepath to ensure it exists
     if os.path.exists(filepath):
@@ -25,6 +25,7 @@ def get_urls(filepath):
 
 if __name__ == "__main__":
 
+    # loop of scrapping: occurs every hour
     while True:
 
         try:
@@ -58,7 +59,7 @@ if __name__ == "__main__":
                         data.append(dic)
 
                     except Exception as e:
-                        log_writer(f"Erreur lors du scrapping du cours: {url}. Details: {traceback.print_exc()}",'error')
+                        log_writer(f"Erreur lors du scrapping du cours: {url}. Details: {e}",'error')
 
 
             # storing datas in a DataFrame
@@ -67,16 +68,17 @@ if __name__ == "__main__":
             log_writer("Sauvegarde des données dans un fichier csv.")
             df.to_csv("csv\\courses_tracked_prices.csv", index=False)  # storing the datas in a csv-file
 
-            courses_to_be_notified = df[(df['Price']<=13.99) & (df["Interested"] == True)] # filtering the courses that are discounted
+            courses_to_be_notified = df[(df['Price']<=13.99) & (df["Interested"] == True)] # filtering the courses that are discounted and i'm interesyted with
             if not courses_to_be_notified.empty:
                 log_writer("Des reductions sur vos cours ont été trouvées, envoi des mails...")
                 send_alert_mails(courses_to_be_notified)
 
-            else:
+            else: # if no course is discounted, then we update the variable MAIL_SENT in the .env file
                 update_env_variable('MAIL_SENT','False')
 
-        if read_log_file()!="":
+
+        if read_log_file()!="": # if there are some logs in the log file
             send_log_mails() # sending the log file if there is one
 
-        time.sleep(3600)
+        time.sleep(3600) # next scrapping is in the next hour
 
