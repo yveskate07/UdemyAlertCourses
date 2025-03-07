@@ -66,7 +66,7 @@ if __name__ == "__main__":
             df = pd.DataFrame(data)
 
             log_writer("Sauvegarde des données dans un fichier csv.")
-            df.to_csv("csv\\courses_tracked_prices.csv", index=False)  # storing the datas in a csv-file
+            df.to_csv(os.path.join("csv","courses_tracked_prices.csv"), index=False)  # storing the datas in a csv-file
 
             courses_to_be_notified = df[(df['Price']<=13.99) & (df["Interested"] == True)] # filtering the courses that are discounted and i'm interesyted with
             if not courses_to_be_notified.empty:
