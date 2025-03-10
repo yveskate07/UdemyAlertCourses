@@ -134,6 +134,8 @@ def send_log_mails():
     EMAIL_PASSWORD = env("PASSWORD")  # Remplacez par votre mot de passe (ou App Password)
     DESTINATAIRE = "kateyveschadrac@gmail.com"  # Remplacez par l'email du destinataire
 
+    log_txt_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'txt', 'logs.txt')
+
 
     # Création du message
     msg = EmailMessage()
@@ -143,11 +145,11 @@ def send_log_mails():
     msg.set_content("Bonjour,\n\nVeuillez trouver ci-joint le fichier de logs.\n\nCordialement.")
 
     # Ajout du fichier en pièce jointe
-    if os.path.exists(log_path):
-        with open(log_path, "rb") as file:
-            msg.add_attachment(file.read(), maintype="application", subtype="octet-stream", filename=log_path)
+    if os.path.exists(log_txt_path):
+        with open(log_txt_path, "rb") as file:
+            msg.add_attachment(file.read(), maintype="application", subtype="octet-stream", filename=log_txt_path)
     else:
-        return log_writer(f"⚠️ Fichier '{log_path}' non trouvé. Aucune pièce jointe envoyée.", 'error')
+        return log_writer(f"⚠️ Fichier '{log_txt_path}' non trouvé. Aucune pièce jointe envoyée.", 'error')
 
     # Envoi du mail via SMTP
     try:

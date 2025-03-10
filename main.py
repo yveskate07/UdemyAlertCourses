@@ -5,7 +5,7 @@ import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup as bs
 from logs_writer import log_writer
-from mail_sender import send_alert_mails, send_log_mails, update_env_variable, read_log_file
+from mail_sender import send_alert_mails, send_log_mails, update_env_variable
 
 # subject I'm interested with
 subject_of_interest = "django"
@@ -77,7 +77,7 @@ if __name__ == "__main__":
                 update_env_variable('MAIL_SENT','False')
 
 
-        if read_log_file()!="": # if there are some logs in the log file
+        if os.path.exists(os.path.join("txt","logs.txt")): # if there are some logs in the log file
             send_log_mails() # sending the log file if there is one
 
         time.sleep(3600) # next scrapping is in the next hour
