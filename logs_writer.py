@@ -1,13 +1,26 @@
 import logging
 import os
-from mail_sender import read_log_file
 
 main_script_path = os.path.dirname(os.path.abspath(__file__))  # directory of this script
+
+log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs','logs.log')
 
 logging.basicConfig(level=logging.DEBUG,
                     filename=os.path.join(main_script_path, "logs", "logs.log"),
                     filemode="a",
                     format='%(asctime)s - %(levelname)s - %(message)s') # configuring the level of the logs to be displayed
+
+
+def read_log_file():
+    """Retourne le contenu du fichier .log"""
+    try:
+        with open(log_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        return "Fichier introuvable."
+    except Exception as e:
+        return f"Erreur : {e}"
+
 
 def log_writer(msg, level='info'): # writing logs with msg depending on the level
     if level == "debug":
